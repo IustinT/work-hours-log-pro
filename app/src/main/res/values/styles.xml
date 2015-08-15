@@ -1,0 +1,73 @@
+<resources>
+
+
+    <style name="FridgeTempStyle" parent="@android:style/Widget.EditText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_weight">0.5</item>
+        <item name="android:textColor">#ff1a2335</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:background">#ecf0f1</item>
+        <item name="android:inputType">numberSigned|numberDecimal</item>
+        <item name="android:maxLength">5</item>
+        <item name="android:ems">10</item>
+    </style>
+
+    <style name="LinearLayoutRows" parent="">
+        <item name="android:orientation">horizontal</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">#bdc3c7</item>
+        <item name="android:padding">5pt</item>
+        <item name="android:layout_margin">2dp</item>
+        <item name="android:weightSum">1</item>
+    </style>
+
+    <style name="Label">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_marginTop">3dp</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="LabelCenter" parent="Label">
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="LabelCenterBorder" parent="Label">
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/border</item>
+    </style>
+
+    <style name="LabelLeft" parent="Label">
+        <item name="android:gravity">left</item>
+    </style>
+
+    <style name="LabelRight" parent="Label">
+        <item name="android:gravity">right</item>
+    </style>
+
+    <style name="CustomRadioButton" >
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_weight">3.1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_margin">1dp</item>
+        <item name="android:background">@drawable/custom_radio_design</item>
+        <item name="android:button">@null</item>
+    </style>
+
+    <style name="SpinnerButtonStyle" parent="@android:style/Widget.DeviceDefault.Light.Spinner">
+
+    </style>
+    <style name="ShiftButtons" parent="SpinnerButtonStyle">
+        <item name="android:gravity">center</item>
+    </style>
+
+    <!-- ActionBar styles -->
+    <style name="MyActionBar"
+        parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/main_accent</item>
+    </style>
+
+</resources>

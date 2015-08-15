@@ -1,0 +1,21 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="uk.co.trotus.workrecordspro.BaseActivity">
+
+    <item android:id="@+id/action_new_shift" android:title="@string/title_activity_new_shift"
+        android:orderInCategory="100" app:showAsAction="ifRoom" />
+
+    <item android:id="@+id/action_view_shift" android:title="View Shifts"
+        android:orderInCategory="200" app:showAsAction="ifRoom" />
+
+    <item android:id="@+id/action_settings" android:title="@string/action_settings"
+        android:orderInCategory="500" app:showAsAction="ifRoom" />
+
+    <item android:id="@+id/action_manage_jobs" android:title="Manage Jobs"
+        android:orderInCategory="300" app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/action_new_job" android:title="Add New Job"
+        android:orderInCategory="400" app:showAsAction="ifRoom"/>
+
+</menu>

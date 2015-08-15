@@ -1,0 +1,246 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            tools:context="uk.co.trotus.workrecordspro.NewShift">
+
+
+            <TextView
+                android:id="@+id/selectShiftTitleLabel"
+                style="@style/LabelCenter"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:text="New Shift" />
+
+            <RadioGroup
+                android:id="@+id/radioGroup"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/selectShiftTitleLabel"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="3dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="0.5dp"
+                android:weightSum="10">
+
+                <RadioButton
+                    android:id="@+id/radioButton"
+                    style="@style/CustomRadioButton"
+                    android:text="Morning" />
+
+                <RadioButton
+                    android:id="@+id/radioButton2"
+                    style="@style/CustomRadioButton"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:text="Evening" />
+
+                <RadioButton
+                    android:id="@+id/radioButton3"
+                    style="@style/CustomRadioButton"
+                    android:text="Night" />
+
+            </RadioGroup>
+
+            <LinearLayout
+                android:id="@+id/linearLayout9"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/radioGroup"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="10dp"
+                android:descendantFocusability="beforeDescendants"
+                android:focusableInTouchMode="true"
+                android:gravity="center"
+                android:measureWithLargestChild="true"
+                android:orientation="horizontal"
+                android:paddingBottom="4dp"
+                android:paddingLeft="1dp"
+                android:paddingRight="1dp"
+                android:paddingTop="4dp"
+                android:weightSum="9">
+
+                <TextView
+                    android:id="@+id/startTimeTextView"
+                    style="@style/LabelLeft"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_margin="0.01dp"
+                    android:layout_weight="1.5"
+                    android:background="@drawable/border"
+                    android:gravity="center"
+                    android:text="Start Time"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/shiftStartDateBtn"
+                    style="@style/ShiftButtons"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_weight="4"
+                    android:onClick="ShiftSelectDate"
+                    android:text="Date" />
+
+                <Button
+                    android:id="@+id/shiftStartTimeBtn"
+                    style="@style/ShiftButtons"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="3"
+                    android:onClick="ShiftSelectTime"
+                    android:text="Hour" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout10"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="false"
+                android:layout_below="@+id/linearLayout9"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:measureWithLargestChild="true"
+                android:orientation="horizontal"
+                android:paddingBottom="4dp"
+                android:paddingLeft="1dp"
+                android:paddingRight="1dp"
+                android:paddingTop="4dp"
+                android:weightSum="9">
+
+                <TextView
+                    android:id="@+id/endTimeTextView"
+                    style="@style/LabelLeft"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_margin="0.01dp"
+                    android:layout_weight="1.5"
+                    android:background="@drawable/border"
+                    android:gravity="center"
+                    android:text="End Time"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/shiftEndDateBtn"
+                    style="@style/ShiftButtons"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_weight="4"
+                    android:onClick="ShiftSelectDate"
+                    android:text="Date" />
+
+                <Button
+                    android:id="@+id/shiftEndTimeBtn"
+                    style="@style/ShiftButtons"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="3"
+                    android:onClick="ShiftSelectTime"
+                    android:text="Time" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout11"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linearLayout10"
+                android:gravity="fill_vertical|right"
+                android:orientation="horizontal"
+                android:paddingBottom="1dp"
+                android:paddingLeft="1dp"
+                android:paddingRight="8dp"
+                android:paddingTop="1dp"
+                android:weightSum="5">
+
+                <TextView
+                    android:id="@+id/textView10"
+                    style="@style/Label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3.5"
+                    android:gravity="center_vertical|right"
+                    android:paddingRight="8dp"
+                    android:text="Total Paid Hours" />
+
+                <TextView
+                    android:id="@+id/totalHoursLabel"
+                    style="@style/LabelCenterBorder"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:gravity="center"
+                    android:text="0h 0m" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/messages"
+                style="@style/Label"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linearLayout11"
+                android:layout_centerHorizontal="true" />
+
+            <EditText
+                android:id="@+id/shiftNotes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/messages"
+                android:layout_centerHorizontal="true"
+                android:ems="10"
+                android:gravity="center"
+                android:hint="( Notes - Optional )"
+                android:inputType="textMultiLine" />
+
+            <Button
+                android:id="@+id/saveShiftBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/shiftNotes"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/border"
+                android:text="Save"
+                android:textColor="@color/workrecordsprotheme_color"
+                android:textStyle="bold" />
+
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <WebView
+        android:id="@+id/webViewNewShift"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="#9e3d657a"
+        android:minHeight="100dp"
+        android:visibility="visible" />
+
+</RelativeLayout>
