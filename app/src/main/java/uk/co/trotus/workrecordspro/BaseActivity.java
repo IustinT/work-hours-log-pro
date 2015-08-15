@@ -14,6 +14,8 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.sql.Date;
+
 public class BaseActivity extends Activity {
 
     static Context context;
@@ -25,8 +27,14 @@ public class BaseActivity extends Activity {
     static DialogFragment timePickerDialog;
     static boolean makeNewShiftFromPunch;
 
-    static boolean loadASpecificJob;
-    static int jobIDToBeLoaded;
+    String DateToString(DateTime dateTime){
+        return dateTime.toString("dd/MM/yyyy HH:mm");
+    }
+
+    DateTime StringToDateTime(String string_DateTime){
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
+        return formatter.parseDateTime(string_DateTime);
+    }
 
     //region Prepare text for buttons and labels
     String MakeTextForDateButtons(DateTime date) {
@@ -47,7 +55,7 @@ public class BaseActivity extends Activity {
 
     public void showDatePickerDialog(String tag, DateTime date) {
         Bundle arguments = new Bundle();
-        arguments.putString("date", date.toString("dd/MM/yyyy HH:mm"));
+        arguments.putString("date", DateToString(date));
         arguments.putString("tag", tag);
 
         datePickerDialog = new DatePickerFragment();
@@ -61,7 +69,7 @@ public class BaseActivity extends Activity {
 
     public void showTimePickerDialog(String tag, DateTime date) {
         Bundle arguments = new Bundle();
-        arguments.putString("date", date.toString("dd/MM/yyyy HH:mm"));
+        arguments.putString("date", DateToString(date));
         arguments.putString("tag", tag);
 
         timePickerDialog = new TimePickerFragment();

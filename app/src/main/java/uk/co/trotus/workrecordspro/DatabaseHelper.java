@@ -5,10 +5,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
+
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Iustin on 13/08/2015.
@@ -73,6 +77,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "  )";
 //endregion
 
+    public DatabaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+
+        // creating required tables
+        db.execSQL(CREATE_TABLE_JOBS);
+        db.execSQL(CREATE_TABLE_SHIFTS);
+        db.execSQL(CREATE_TABLE_JOBS_SHIFTS);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // on upgrade drop older tables
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_JOBS_SHIFTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_JOBS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SHIFTS);
+
+        // create new tables
+        onCreate(db);
+    }
+
+    //region DB Functions for JOBS
     /*
  * Creating a JOB
  */
@@ -81,11 +110,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, job.getName());
-        values.put(KEY_ENABLED, job.getEnable());
+
+        if (job.getEnable())
+            values.put(KEY_ENABLED, 1);
+        else values.put(KEY_ENABLED, 0);
 
         // insert row
         db.insert(TABLE_JOBS, null, values);
-
+        closeDB();
     }
 
     /*
@@ -113,12 +145,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 // adding to jobs list
                 jobs.add(job);
-                Log.e(LOG, "Job from DB " + job.getID() + " " + job.getName() + " " + job.getEnable());
 
             } while (cursor.moveToNext());
             Log.e(LOG, jobs.toString());
         }
-//closeDB();
+        closeDB();
         return jobs;
     }
 
@@ -144,9 +175,161 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         enabled = IntToBoolean(c.getInt(c.getColumnIndex(KEY_ENABLED)));
         job.setEnabled(enabled);
 
-        Log.e(LOG, "Job id " + job.getID() + " name " + job.getName() + " enabled " + job.getEnable());
-
+        closeDB();
         return job;
+    }
+
+    public void updateJob(Job job) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_NAME, job.getName());
+        values.put(KEY_ENABLED, job.getEnable());
+
+        // updating row
+        db.update(TABLE_JOBS, values, KEY_ID + " = ?",
+                new String[]{String.valueOf(job.getID())});
+    }
+
+    /**
+     * Deleting a JOB
+     */
+    public void deleteJOB(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_JOBS, KEY_ID + " = ?",
+                new String[]{String.valueOf(id)});
+    }
+    //endregion DB Functions for JOBS
+
+    //region DB Functions for SHIFTS
+
+    /**
+     * Create a Shift
+     */
+    long insertShift(Shift shift) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_START_DATE, shift.getStartDate().getMillis());
+        values.put(KEY_END_DATE, shift.getEndDate().getMillis());
+
+        // insert row
+        long tag_id = db.insert(TABLE_SHIFTS, null, values);
+
+        closeDB();
+        return tag_id;
+    }
+
+    /**
+     * getting all Shifts
+     * */
+    public List<Shift> getAllShifts() {
+        List<Shift> shifts = new ArrayList<Shift>();
+        String selectQuery = "SELECT  * FROM " + TABLE_SHIFTS;
+
+        Log.e(LOG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (c.moveToFirst()) {
+            do {
+                Shift shift = new Shift();
+                shift.setID(c.getInt(c.getColumnIndex(KEY_SHIFT_ID)));
+
+                shift.setStartDate(new DateTime(c.getLong(c.getColumnIndex(KEY_START_DATE))));
+                shift.setEndDate(new DateTime(c.getLong(c.getColumnIndex(KEY_END_DATE))));
+
+                // adding to shifts list
+                shifts.add(shift);
+            } while (c.moveToNext());
+        }
+        closeDB();
+        return shifts;
+    }
+
+    public Shift getShift(int shift_ID){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT  * FROM " + TABLE_SHIFTS + " WHERE "
+                + KEY_ID + " = " + shift_ID;
+
+        Log.e(LOG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null)
+            c.moveToFirst();
+
+        Shift shift = new Shift();
+        shift.setID(shift_ID);
+        shift.setStartDate(new DateTime(c.getLong(c.getColumnIndex(KEY_START_DATE))));
+        shift.setEndDate(new DateTime(c.getLong(c.getColumnIndex(KEY_END_DATE))));
+
+        closeDB();
+        return shift;
+    }
+
+    public void updateShift(Shift shift) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_START_DATE, shift.getStartDate().getMillis());
+        values.put(KEY_END_DATE, shift.getEndDate().getMillis());
+
+        // updating row
+        db.update(TABLE_SHIFTS, values, KEY_ID + " = ?",
+                new String[]{String.valueOf(shift.getID())});
+    }
+
+    /**
+     * Deleting a JOB
+     */
+    public void deleteShift(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteStatement s = db.compileStatement("select count(*) from " + TABLE_SHIFTS + " where " +
+                KEY_ID + "='" + new String[]{String.valueOf(id)} + "'; ");
+
+        if (s.simpleQueryForLong() == 0)
+            db.delete(TABLE_SHIFTS, KEY_ID + " = ?",
+                    new String[]{String.valueOf(id)});
+        else ; // TODO: 15/08/2015 IMPORTANT DB delete shifts that are in jobs-shifts ??? analytics
+    }
+
+    //endregion
+
+    //region DB Functions for JOBS_SHIFTS
+
+    public void createJob_Shift(long shift_id, long job_id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_JOB_ID, job_id);
+        values.put(KEY_SHIFT_ID, shift_id);
+
+       db.insert(TABLE_JOBS_SHIFTS, null, values);
+    }
+
+    /**
+     * Updating a Job_Shift
+     */
+  // TODO: 15/08/2015 Update jobs-shifts in DB ?
+
+    /**
+     * Deleting a Job_Shift
+     */
+    public void deleteJob_Shift(int job_id, int shift_id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_JOBS_SHIFTS, KEY_JOB_ID + " = ? and " + KEY_SHIFT_ID + " = ? ",
+                new String[] { String.valueOf(job_id), String.valueOf(shift_id) });
+    }
+    //endregion
+
+    // closing database
+    public void closeDB() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        if (db != null && db.isOpen())
+            db.close();
     }
 
     Boolean IntToBoolean(int integer) {
@@ -157,36 +340,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return (false);
         //// TODO: 14/08/2015 Analytics wrong data in database
         return false;
-    }
-
-    // closing database
-    public void closeDB() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        if (db != null && db.isOpen())
-            db.close();
-    }
-
-    public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-
-        // creating required tables
-        db.execSQL(CREATE_TABLE_JOBS);
-        db.execSQL(CREATE_TABLE_SHIFTS);
-        db.execSQL(CREATE_TABLE_JOBS_SHIFTS);
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // on upgrade drop older tables
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_JOBS_SHIFTS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_JOBS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SHIFTS);
-
-        // create new tables
-        onCreate(db);
     }
 }

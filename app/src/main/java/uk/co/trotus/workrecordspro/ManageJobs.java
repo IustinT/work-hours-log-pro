@@ -24,9 +24,10 @@ public class ManageJobs extends BaseActivity implements AdapterView.OnItemClickL
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-        jobIDToBeLoaded = jobs.get(position).getID();
-        loadASpecificJob=true;
-        startActivity(new Intent(this, EditJob.class));
+        Intent intent = new Intent(this, EditJob.class);
+        intent.putExtra("loadASpecificJob", true);
+        intent.putExtra("jobIDToBeLoaded", jobs.get(position).getID());
+        startActivity(intent);
     }
 
     void DisplayJobsList(ListView listView, List<Job> listOfJobs) {
@@ -48,6 +49,7 @@ public class ManageJobs extends BaseActivity implements AdapterView.OnItemClickL
         setContentView(R.layout.activity_manage_jobs);
         InitializeVariables();
         DisplayJobsList(jobsList, jobs);
+        ShowToast("On create", getApplicationContext());
     }
 
     void InitializeVariables() {
