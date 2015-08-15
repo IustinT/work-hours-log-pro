@@ -23,4 +23,5 @@
     <color name="silver">#bdc3c7</color>
     <color name="background">#F5F2ED</color>
     <color name="main_accent">#33BF9A</color>
+    <color name="light_grey">#cccccc</color>
 </resources>

@@ -4,10 +4,10 @@ package uk.co.trotus.workrecordspro;
  * Created by Iustin on 05/08/2015.
  */
 public class Job {
-    int ID;
-    Boolean enabled;
-    String name, notes;
-    double wagesPerHour, totalWages;
+    private int ID;
+    private Boolean enabled;
+    private String name, notes;
+    private double wagesPerHour, totalWages;
 
     public Job(){
     }

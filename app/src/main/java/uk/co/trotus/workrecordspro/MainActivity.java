@@ -31,7 +31,6 @@ public class MainActivity extends BaseActivity {
         punchedIn = true;
         makeNewShiftFromPunch = false;
         ToggleButtonsStateAndText();
-
     }
 
     void PunchOut() {

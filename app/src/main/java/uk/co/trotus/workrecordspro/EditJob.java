@@ -13,10 +13,21 @@ public class EditJob extends BaseActivity {
     static EditText notesEditText;
     static CheckBox jobEnabledCheckBox;
     // Database Helper
-    DatabaseHelper db;
+    static DatabaseHelper db;
 
     public void SaveJobButton_OnClick(View v) {
         SaveJob(job);
+    }
+
+    void LoadAJob(int jobID) {
+        Job job = db.getJob(jobID);
+        PopulateJob(job);
+    }
+    void PopulateJob(Job job){
+        jobNameEditText.setText(job.getName());
+        jobEnabledCheckBox.setChecked(job.getEnable());
+        hourlyPayEditText.setText(Double.toString(job.getWagesPerHour()));
+        notesEditText.setText(job.getNotes());
     }
 
     void SaveJob(Job job) {
@@ -35,7 +46,7 @@ public class EditJob extends BaseActivity {
         job.setEnabled(jobEnabledCheckBox.isChecked());
 
         if (!hourlyPayEditText.getText().toString().isEmpty())
-         hourlyPay = Double.parseDouble(hourlyPayEditText.getText().toString());
+            hourlyPay = Double.parseDouble(hourlyPayEditText.getText().toString());
         else {
             ShowToast("The Hourly Pay field is empty!", context);
             return;
@@ -50,18 +61,25 @@ public class EditJob extends BaseActivity {
 
     }
 
-void InitializeVariables(){
-    context = getApplicationContext();
-    jobNameEditText = (EditText)findViewById(R.id.jobNameEditText);
-    hourlyPayEditText = (EditText) findViewById(R.id.hourlyPayEditText);
-    notesEditText =(EditText) findViewById(R.id.notesEditText);
-    jobEnabledCheckBox = (CheckBox) findViewById(R.id.jobEnabledCheckBox);
-}
+    void InitializeVariables() {
+        context = getApplicationContext();
+        jobNameEditText = (EditText) findViewById(R.id.jobNameEditText);
+        hourlyPayEditText = (EditText) findViewById(R.id.hourlyPayEditText);
+        notesEditText = (EditText) findViewById(R.id.notesEditText);
+        jobEnabledCheckBox = (CheckBox) findViewById(R.id.jobEnabledCheckBox);
+        db= new DatabaseHelper(getApplicationContext());
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_job);
         InitializeVariables();
-    }
 
+        if (loadASpecificJob && jobIDToBeLoaded > 0) {
+            loadASpecificJob=false;
+            LoadAJob(jobIDToBeLoaded);
+            jobIDToBeLoaded=0;
+        }
+    }
 }

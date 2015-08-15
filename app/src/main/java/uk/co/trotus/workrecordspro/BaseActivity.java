@@ -25,6 +25,9 @@ public class BaseActivity extends Activity {
     static DialogFragment timePickerDialog;
     static boolean makeNewShiftFromPunch;
 
+    static boolean loadASpecificJob;
+    static int jobIDToBeLoaded;
+
     //region Prepare text for buttons and labels
     String MakeTextForDateButtons(DateTime date) {
         DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("E d MMM yyyy");

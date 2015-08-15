@@ -113,10 +113,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 // adding to jobs list
                 jobs.add(job);
+                Log.e(LOG, "Job from DB " + job.getID() + " " + job.getName() + " " + job.getEnable());
 
             } while (cursor.moveToNext());
+            Log.e(LOG, jobs.toString());
         }
-
+//closeDB();
         return jobs;
     }
 
@@ -125,7 +127,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
  */
     public Job getJob(long job_id) {
         SQLiteDatabase db = this.getReadableDatabase();
-boolean enabled;
+        boolean enabled;
         String selectQuery = "SELECT  * FROM " + TABLE_JOBS + " WHERE "
                 + KEY_ID + " = " + job_id;
 
@@ -139,8 +141,10 @@ boolean enabled;
         Job job = new Job();
         job.setID(c.getInt(c.getColumnIndex(KEY_ID)));
         job.setName((c.getString(c.getColumnIndex(KEY_NAME))));
-        enabled=IntToBoolean(c.getInt(c.getColumnIndex(KEY_CREATED_AT)));
+        enabled = IntToBoolean(c.getInt(c.getColumnIndex(KEY_ENABLED)));
         job.setEnabled(enabled);
+
+        Log.e(LOG, "Job id " + job.getID() + " name " + job.getName() + " enabled " + job.getEnable());
 
         return job;
     }
