@@ -20,12 +20,8 @@ public class BaseActivity extends Activity {
 
     static Context context;
 
-    static DateTime punchInDate = new DateTime().withSecondOfMinute(0).withMillisOfSecond(0);
-    static DateTime punchOutDate = new DateTime(punchInDate);
-
     static DialogFragment datePickerDialog;
     static DialogFragment timePickerDialog;
-    static boolean makeNewShiftFromPunch;
 
     String DateToString(DateTime dateTime){
         return dateTime.toString("dd/MM/yyyy HH:mm");

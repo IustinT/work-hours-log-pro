@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends BaseActivity {
+    static DateTime punchInDate = new DateTime().withSecondOfMinute(0).withMillisOfSecond(0);
+    static DateTime punchOutDate = new DateTime(punchInDate);
 
     static Button punchButton;
     static Button punchInDateBtn;
@@ -19,6 +21,7 @@ public class MainActivity extends BaseActivity {
     static boolean punchedIn;
 
     DatabaseHelper db;
+
     public void PunchButton_OnClick(View v) {
         if (punchedIn)
             PunchOut();
@@ -29,16 +32,21 @@ public class MainActivity extends BaseActivity {
     void PunchIn() {
         punchInDate = new DateTime().withSecondOfMinute(0).withMillisOfSecond(0);
         punchedIn = true;
-        makeNewShiftFromPunch = false;
         ToggleButtonsStateAndText();
     }
 
     void PunchOut() {
         punchOutDate = new DateTime().withSecondOfMinute(0).withMillisOfSecond(0);
         punchedIn = false;
-        makeNewShiftFromPunch = true;
         ToggleButtonsStateAndText();
-        startActivity(new Intent(this, NewShift.class));
+
+
+        Intent intent = new Intent(this, NewShift.class);
+        intent.putExtra("makeNewShiftFromPunch", true);
+        intent.putExtra("punchInDate", DateToString(punchInDate));
+        intent.putExtra("punchOutDate", DateToString(punchOutDate));
+        startActivity(intent);
+
         //ToggleButtonsStateAndText();
     }
     //endregion Punch In Out
@@ -68,7 +76,6 @@ public class MainActivity extends BaseActivity {
     }
 
     public void CancelPunch(View v) {
-        makeNewShiftFromPunch = false;
         punchedIn = false;
         ToggleButtonsStateAndText();
     }

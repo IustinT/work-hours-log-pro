@@ -8,9 +8,8 @@ import org.joda.time.PeriodType;
  * Created by Iustin on 05/08/2015.
  */
 public class Shift {
-    private int ID, job, minutesInWork, breakMinutes;
+    private int ID, minutesInWork, breakMinutes = 0;
     private DateTime startDate, endDate;
-    private double wages, wagesPerHour;
     private Boolean isHolidayPay;
     private String notes;
 
@@ -34,16 +33,8 @@ public class Shift {
         this.endDate = endDate;
     }
 
-    public Shift(int ID, int job, DateTime startDate, DateTime endDate) {
+    public Shift(int ID, DateTime startDate, DateTime endDate, Boolean isHolidayPay, String notes) {
         this.ID = ID;
-        this.job = job;
-        this.startDate = startDate;
-        this.endDate = endDate;
-    }
-
-    public Shift(int ID, int job, DateTime startDate, DateTime endDate, Boolean isHolidayPay, String notes) {
-        this.ID = ID;
-        this.job = job;
         this.startDate = startDate;
         this.endDate = endDate;
         this.isHolidayPay = isHolidayPay;
@@ -58,16 +49,6 @@ public class Shift {
     // setting id
     public void setID(int ID) {
         this.ID = ID;
-    }
-
-    // getting the job
-    public int getJob() {
-        return this.job;
-    }
-
-    // setting the job
-    public void setJob(int job) {
-        this.job = job;
     }
 
     public DateTime getStartDate() {
@@ -97,22 +78,6 @@ public class Shift {
 
     public void setBreakMinutes(int breakMinutes) {
         this.breakMinutes = breakMinutes;
-    }
-
-    public double getWages() {
-        return this.wages;
-    }
-
-    public void setWages(double wages) {
-        this.wages = wages;
-    }
-
-    public double getWagesPerHour() {
-        return this.wagesPerHour;
-    }
-
-    public void setWagesPerHour(double wagesPerHour) {
-        this.wagesPerHour = wagesPerHour;
     }
 
     public boolean getHolidayPay() {

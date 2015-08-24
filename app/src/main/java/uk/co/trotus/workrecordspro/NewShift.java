@@ -2,19 +2,26 @@ package uk.co.trotus.workrecordspro;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import org.joda.time.DateTime;
 
-public class NewShift extends BaseActivity {
+import java.util.ArrayList;
+import java.util.List;
+
+public class NewShift extends BaseActivity implements AdapterView.OnItemSelectedListener {
 
     //region Declare Variables
 
-    static TextView messages;
     static TextView hoursLabel;
     static EditText shiftNotes;
+    static Spinner jobsSpinner;
 
     static Button startDateBtn;
     static Button endDateBtn;
@@ -22,15 +29,56 @@ public class NewShift extends BaseActivity {
 
     static Button startTimeBtn;
     static Button endTimeBtn;
+    DatabaseHelper db;
 
+    //initialising the dates here is redundant but is probably safer
     static DateTime startDate = new DateTime().withSecondOfMinute(0).withMillisOfSecond(0);
     static DateTime endDate = new DateTime(startDate);
 
     static Job job;
     static Shift shift;
+
+    SpinnerAdapter jobsSpinnerAdapter;
+    ArrayList<Job> jobs;
     //endregion
 
-    void Stuff() {}
+    void Stuff() {
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        job=(jobs.get(position));
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parentView) {
+        ShowToast("Spinner On Nothing Selected", getApplicationContext()); //TODO analytics
+    }
+
+    public void SaveShift(View v) {
+        SaveShift(shift);
+    }
+
+    void SaveShift(Shift shift) {
+
+        int shiftId = db.createShift(shift);
+
+    }
+
+    void AddJobsToSpinner(List<Job> listOfJobs) {
+        int counter = 0;
+        String[] jobsNames = new String[listOfJobs.size()];
+
+        for (Job job : listOfJobs) {
+            jobsNames[counter] = job.getName();
+            counter++;
+        }
+        jobsSpinnerAdapter = new ArrayAdapter<>
+                (getApplicationContext(),
+                        R.layout.spinner_item,
+                        jobsNames);
+        jobsSpinner.setAdapter(jobsSpinnerAdapter);
+    }
 
     //region Update the Text on buttons and labels
     void UpdateTextOnButtonsAndLabels() {
@@ -42,11 +90,11 @@ public class NewShift extends BaseActivity {
 
         if (shift.getStartDate().isBefore(shift.getEndDate().plusSeconds(1)))
             UpdateHoursLabel(shift.getMinutesInWork());
-        else UpdateHoursLabel(-1);
+        else UpdateHoursLabel(0);
     }
 
     void UpdateHoursLabel(int minutes) {
-
+        // TODO: 23/08/2015 make this method in 2 differit methods
         int hours = 0;
         String errorText; //= context.getResources().getString(R.string.warning_shift_start_date_is_after_end_date);
         String hoursText;
@@ -79,17 +127,17 @@ public class NewShift extends BaseActivity {
         } else if (minutes == 0) {
             text = minutes + " m";
             EnableSaveButton(false);
-        } else ;// TODO: 05/08/2015 unpredicted situation
+        } // TODO: 05/08/2015 unpredicted situation
 
         hoursLabel.setText(text);
     }
 
     //endregion
-    void EnableSaveButton(boolean newStage) {
-        boolean stage = saveShiftBtn.isEnabled();
+    void EnableSaveButton(boolean newState) {
+        boolean state = saveShiftBtn.isEnabled();
 
-        if (stage != newStage)
-            saveShiftBtn.setEnabled(newStage);
+        if (state != newState)
+            saveShiftBtn.setEnabled(newState);
     }
 
     //region Select Date
@@ -100,7 +148,7 @@ public class NewShift extends BaseActivity {
             showDatePickerDialog("StartDate", startDate);
         else if (id == (R.id.shiftEndDateBtn))
             showDatePickerDialog("EndDate", endDate);
-        else ;  //// TODO: 08/08/2015 Analytics
+         // TODO: 08/08/2015 Analytics error
     }
 
     public void CatchReturnedDate(int year, int month, int day) {
@@ -117,6 +165,7 @@ public class NewShift extends BaseActivity {
         UpdateTextOnButtonsAndLabels();
     }
     //endregion Select Date
+
 
     //region Select Time
     public void ShiftSelectTime(View v) {
@@ -143,33 +192,51 @@ public class NewShift extends BaseActivity {
     }
     //endregion
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_shift);
-        InitialiseVariables();
 
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                if (extras.getBoolean("makeNewShiftFromPunch")) {
+
+                    startDate = new DateTime(
+                            StringToDateTime(
+                                    extras.getString("punchInDate")
+                            ));
+                    endDate = new DateTime(
+                            StringToDateTime(
+                                    extras.getString("punchOutDate")
+                            ));
+                }
+
+            } else {
+                startDate = new DateTime().withSecondOfMinute(0).withMillisOfSecond(0);
+                endDate = new DateTime(startDate);
+            }
+        }
+
+        InitialiseVariables();
         UpdateTextOnButtonsAndLabels();
 
+        AddJobsToSpinner(jobs);
         Stuff();
     }
 
     void InitialiseVariables() {
 
-        if (makeNewShiftFromPunch) {
-            makeNewShiftFromPunch = false;
-            startDate = new DateTime(punchInDate);
-            endDate = new DateTime(punchOutDate);
-        } else {
-            startDate = new DateTime().withSecondOfMinute(0).withMillisOfSecond(0);
-            endDate = new DateTime(startDate);
-        }
+        context = getApplicationContext();
+        db = new DatabaseHelper(context);
+
         job = new Job();
         shift = new Shift(startDate, endDate);
-        shift.setJob(1); // TODO: 09/08/2015 add job
-        shift.setWages(4);
 
-        messages = (TextView) findViewById(R.id.messages);
+        jobsSpinner = (Spinner) findViewById(R.id.jobsSpinner);
+        jobsSpinner.setOnItemSelectedListener(this);
+
         hoursLabel = (TextView) findViewById(R.id.totalHoursLabel);
         startDateBtn = (Button) findViewById(R.id.shiftStartDateBtn);
         endDateBtn = (Button) findViewById(R.id.shiftEndDateBtn);
@@ -177,7 +244,7 @@ public class NewShift extends BaseActivity {
         endTimeBtn = (Button) findViewById(R.id.shiftEndTimeBtn);
         saveShiftBtn = (Button) findViewById(R.id.saveShiftBtn);
         shiftNotes = (EditText) findViewById(R.id.shiftNotes);
-        context = getApplicationContext();
 
+        jobs = (ArrayList) db.getAllJobs();
     }
 }

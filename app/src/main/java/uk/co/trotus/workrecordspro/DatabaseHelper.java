@@ -206,7 +206,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * Create a Shift
      */
-    long insertShift(Shift shift) {
+    public int createShift(Shift shift) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -217,7 +217,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         long tag_id = db.insert(TABLE_SHIFTS, null, values);
 
         closeDB();
-        return tag_id;
+        return (int) tag_id;
     }
 
     /**

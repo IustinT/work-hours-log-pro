@@ -19,19 +19,10 @@
             tools:context="uk.co.trotus.workrecordspro.NewShift">
 
 
-            <TextView
-                android:id="@+id/selectShiftTitleLabel"
-                style="@style/LabelCenter"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:text="New Shift" />
-
             <RadioGroup
                 android:id="@+id/radioGroup"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/selectShiftTitleLabel"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="3dp"
                 android:gravity="center"
@@ -58,11 +49,19 @@
 
             </RadioGroup>
 
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/jobsSpinner"
+                android:layout_below="@+id/radioGroup"
+                android:spinnerMode="dialog"
+                android:background="@drawable/border" />
+
             <LinearLayout
                 android:id="@+id/linearLayout9"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/radioGroup"
+                android:layout_below="@+id/jobsSpinner"
                 android:layout_marginBottom="3dp"
                 android:layout_marginTop="10dp"
                 android:descendantFocusability="beforeDescendants"
@@ -197,24 +196,16 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/messages"
-                style="@style/Label"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/linearLayout11"
-                android:layout_centerHorizontal="true" />
-
             <EditText
                 android:id="@+id/shiftNotes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/messages"
                 android:layout_centerHorizontal="true"
                 android:ems="10"
                 android:gravity="center"
                 android:hint="( Notes - Optional )"
-                android:inputType="textMultiLine" />
+                android:inputType="textMultiLine"
+                android:layout_below="@+id/linearLayout11" />
 
             <Button
                 android:id="@+id/saveShiftBtn"
@@ -226,7 +217,8 @@
                 android:background="@drawable/border"
                 android:text="Save"
                 android:textColor="@color/workrecordsprotheme_color"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:onClick="SaveShift"/>
 
 
         </RelativeLayout>
