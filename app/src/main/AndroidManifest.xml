@@ -48,6 +48,7 @@
         <activity
             android:name=".EditJob"
             android:label="@string/title_activity_edit_job"
+            android:configChanges="orientation"
             android:parentActivityName=".ManageJobs" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

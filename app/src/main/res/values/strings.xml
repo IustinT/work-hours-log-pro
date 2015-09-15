@@ -9,4 +9,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_edit_job">Edit Job</string>
+    <string name="AddNewPay">Add New Pay Value</string>
+    <string name="cancel">Cancel</string>
+    <string name="readPayRateTitle">Add a New Pay Rate</string>
 </resources>

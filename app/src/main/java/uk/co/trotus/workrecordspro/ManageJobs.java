@@ -49,7 +49,6 @@ public class ManageJobs extends BaseActivity implements AdapterView.OnItemClickL
         setContentView(R.layout.activity_manage_jobs);
         InitializeVariables();
         DisplayJobsList(jobsList, jobs);
-        ShowToast("On create", getApplicationContext());
     }
 
     void InitializeVariables() {
@@ -60,5 +59,11 @@ public class ManageJobs extends BaseActivity implements AdapterView.OnItemClickL
         jobsList.setOnItemClickListener(this);
         db = new DatabaseHelper(context);
         jobs = (ArrayList) db.getAllJobs();
+    }
+
+    @Override
+    public void onBackPressed() {
+        OpenMainActivity();
+        super.onBackPressed();
     }
 }

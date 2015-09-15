@@ -123,6 +123,9 @@ public class BaseActivity extends Activity {
     public void OpenSettingsActivity(View v) {
         startActivity(new Intent(this, SettingsActivity.class));
     }
+    public void OpenMainActivity() {
+        startActivity(new Intent(this, MainActivity.class));
+    }
     public void OpenNewJobActivity(View v) {
         startActivity(new Intent(this, EditJob.class));
     }

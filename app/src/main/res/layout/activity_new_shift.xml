@@ -55,7 +55,8 @@
                 android:id="@+id/jobsSpinner"
                 android:layout_below="@+id/radioGroup"
                 android:spinnerMode="dialog"
-                android:background="@drawable/border" />
+                android:background="@drawable/border"
+                android:layout_margin="4dp" />
 
             <LinearLayout
                 android:id="@+id/linearLayout9"
@@ -214,10 +215,8 @@
                 android:layout_below="@+id/shiftNotes"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/border"
+                android:background="@drawable/save_shift_btn"
                 android:text="Save"
-                android:textColor="@color/workrecordsprotheme_color"
-                android:textStyle="bold"
                 android:onClick="SaveShift"/>
 
 

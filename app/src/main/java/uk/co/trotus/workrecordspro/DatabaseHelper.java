@@ -12,11 +12,7 @@ import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-/**
- * Created by Iustin on 13/08/2015.
- */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     //region Define Variables
@@ -27,15 +23,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     // Database Name
-    private static final String DATABASE_NAME = "WorkHoursPro";
+    private static final String DATABASE_NAME = "WorkHoursPro.db";
 
     // Table Names
     private static final String TABLE_JOBS = "Jobs";
     private static final String TABLE_SHIFTS = "Shift";
     private static final String TABLE_JOBS_SHIFTS = "Jobs_Shifts";
+    private static final String TABLE_PAY_RATES = "Pay_Rates";
+    private static final String TABLE_JOBS_PAY_RATES = "Jobs_Pay_Rates";
 
     // Common column names
-    private static final String KEY_ID = "ID";
+    private static final String KEY_ID = "_ID";
     private static final String KEY_CREATED_AT = "created_at";
 
     // JOBS Table - column names
@@ -49,8 +47,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // JOBS_SHIFTS Table - column names
     private static final String KEY_JOB_ID = "Job_id";
     private static final String KEY_SHIFT_ID = "Shift_id";
-    //endregion
 
+
+    // PayRate Table - column names
+    private static final String KEY_PAY_AMOUNT = "Amount";
+    private static final String KEY_PAY_PROCENT = "Percent";
+
+    // JOBS_PAYRATE Table - column names
+    private static final String KEY_PAYRATE_ID = "PayRate_id";
+
+    //endregion
 
     //region Table Create Statements
     // JOBS table create statement
@@ -65,15 +71,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + KEY_END_DATE + " INTEGER" + ")";
 
     // JOBS_SHIFTS table create statement
-    //// TODO: COMPOUND KEY
     private static final String CREATE_TABLE_JOBS_SHIFTS = "CREATE TABLE "
             + TABLE_JOBS_SHIFTS + "("
             + KEY_JOB_ID + " INTEGER NOT NULL,"
             + KEY_SHIFT_ID + " INTEGER NOT NULL,"
+            + "PRIMARY KEY (" + KEY_JOB_ID + ", " + KEY_SHIFT_ID + ")"
             + "FOREIGN KEY (" + KEY_JOB_ID + ") REFERENCES "
             + TABLE_JOBS + "(" + KEY_ID + "), "
             + "FOREIGN KEY (" + KEY_SHIFT_ID + ") REFERENCES "
             + TABLE_SHIFTS + "(" + KEY_ID + ")"
+            + "  )";
+
+    // PAY_RATES table create statement
+    private static final String CREATE_TABLE_PAY_RATES = "CREATE TABLE " + TABLE_PAY_RATES
+            + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_PAY_AMOUNT + " REAL,"
+            + KEY_PAY_PROCENT + " BOOLEAN)";
+
+    // JOBS_SHIFTS table create statement
+    private static final String CREATE_TABLE_JOBS_PAY_RATES = "CREATE TABLE "
+            + TABLE_JOBS_PAY_RATES + "("
+            + KEY_JOB_ID + " INTEGER NOT NULL,"
+            + KEY_PAYRATE_ID + " INTEGER NOT NULL,"
+            + "PRIMARY KEY (" + KEY_JOB_ID + ", " + KEY_PAYRATE_ID + ")"
+            + "FOREIGN KEY (" + KEY_JOB_ID + ") REFERENCES "
+            + TABLE_JOBS + "(" + KEY_ID + "), "
+            + "FOREIGN KEY (" + KEY_PAYRATE_ID + ") REFERENCES "
+            + TABLE_PAY_RATES + "(" + KEY_ID + ")"
             + "  )";
 //endregion
 
@@ -88,6 +111,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_JOBS);
         db.execSQL(CREATE_TABLE_SHIFTS);
         db.execSQL(CREATE_TABLE_JOBS_SHIFTS);
+        db.execSQL(CREATE_TABLE_PAY_RATES);
+        db.execSQL(CREATE_TABLE_JOBS_PAY_RATES);
+
     }
 
     @Override
@@ -105,7 +131,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /*
  * Creating a JOB
  */
-    public void createJob(Job job) {
+    public long createJob(Job job) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -116,15 +142,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         else values.put(KEY_ENABLED, 0);
 
         // insert row
-        db.insert(TABLE_JOBS, null, values);
-        closeDB();
+        long newJobId = db.insert(TABLE_JOBS, null, values);
+        return newJobId;
     }
 
     /*
  * getting all JOBS
  * */
-    public List<Job> getAllJobs() {
-        List<Job> jobs = new ArrayList<Job>();
+    public ArrayList<Job> getAllJobs() {
+        ArrayList<Job> jobs = new ArrayList<Job>();
         String selectQuery = "SELECT  * FROM " + TABLE_JOBS;
         boolean enabled;
 
@@ -222,7 +248,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * getting all Shifts
-     * */
+     */
     public List<Shift> getAllShifts() {
         List<Shift> shifts = new ArrayList<Shift>();
         String selectQuery = "SELECT  * FROM " + TABLE_SHIFTS;
@@ -249,7 +275,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return shifts;
     }
 
-    public Shift getShift(int shift_ID){
+    public Shift getShift(int shift_ID) {
         SQLiteDatabase db = this.getReadableDatabase();
         String selectQuery = "SELECT  * FROM " + TABLE_SHIFTS + " WHERE "
                 + KEY_ID + " = " + shift_ID;
@@ -307,13 +333,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(KEY_JOB_ID, job_id);
         values.put(KEY_SHIFT_ID, shift_id);
 
-       db.insert(TABLE_JOBS_SHIFTS, null, values);
+        db.insert(TABLE_JOBS_SHIFTS, null, values);
     }
 
     /**
      * Updating a Job_Shift
      */
-  // TODO: 15/08/2015 Update jobs-shifts in DB ?
+    // TODO: 15/08/2015 Update jobs-shifts in DB ?
 
     /**
      * Deleting a Job_Shift
@@ -321,10 +347,103 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deleteJob_Shift(int job_id, int shift_id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_JOBS_SHIFTS, KEY_JOB_ID + " = ? and " + KEY_SHIFT_ID + " = ? ",
-                new String[] { String.valueOf(job_id), String.valueOf(shift_id) });
+                new String[]{String.valueOf(job_id), String.valueOf(shift_id)});
     }
     //endregion
 
+    //region DB Functions for PAY_RATES
+
+    public long createPayRate(PayRate payRate) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_PAY_AMOUNT, payRate.getAmount());
+        values.put(KEY_PAY_PROCENT, payRate.getIsProcent());
+
+        // insert row
+        long payRateId = db.insert(TABLE_PAY_RATES, null, values);
+        return payRateId;
+    }
+
+    public PayRate getPayRate(long payrateId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT  * FROM " + TABLE_PAY_RATES + " WHERE "
+                + KEY_ID + " = " + payrateId;
+
+        Log.e(LOG, selectQuery);
+        PayRate payrate = new PayRate();
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null) {
+            c.moveToFirst();
+            payrate.setId(c.getInt(c.getColumnIndex(KEY_ID)));
+            payrate.setAmount(c.getDouble(c.getColumnIndex(KEY_PAY_AMOUNT)));
+            payrate.setIsProcent(IntToBoolean(c.getInt(c.getColumnIndex(KEY_PAY_PROCENT))));
+            return payrate;
+        }
+        //// TODO: 06/09/2015 what if job does not exist
+        return null;
+    }
+
+    public ArrayList<PayRate> getAllPayRates(boolean percents) {
+        ArrayList<PayRate> payRates = new ArrayList<PayRate>();
+        String selectQuery = "SELECT  * FROM " + TABLE_PAY_RATES;
+
+        if (percents)
+            selectQuery += " WHERE " + KEY_PAY_PROCENT + " = " + 1;
+        else
+            selectQuery += " WHERE " + KEY_PAY_PROCENT + " = " + 0;
+
+        Log.e(LOG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                PayRate payrate = new PayRate();
+                payrate.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
+                payrate.setAmount(cursor.getDouble(cursor.getColumnIndex(KEY_PAY_AMOUNT)));
+                payrate.setIsProcent(IntToBoolean(cursor.getInt(cursor.getColumnIndex(KEY_PAY_PROCENT))));
+
+                // adding to jobs list
+                payRates.add(payrate);
+
+            } while (cursor.moveToNext());
+            Log.e(LOG, payRates.toString());
+        }
+        return payRates;
+    }
+    //endregion
+
+    //region DB Functions for JOBS_PAY_RATES
+    public void createJob_PayRate(long job_id, long payRateId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(KEY_JOB_ID, job_id);
+        values.put(KEY_PAYRATE_ID, payRateId);
+
+        db.insert(TABLE_JOBS_PAY_RATES, null, values);
+    }
+
+    public int getJob_PayRateId(long job_id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT " + KEY_PAYRATE_ID + " FROM " + TABLE_JOBS_PAY_RATES + " WHERE "
+                + KEY_JOB_ID + " = " + job_id +"";
+
+        Log.e(LOG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c!=null)
+            c.moveToFirst();
+        return (c.getInt(c.getColumnIndex(KEY_PAYRATE_ID)));
+    }
+
+    //endregion
     // closing database
     public void closeDB() {
         SQLiteDatabase db = this.getReadableDatabase();

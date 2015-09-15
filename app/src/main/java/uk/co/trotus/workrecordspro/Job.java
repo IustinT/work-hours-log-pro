@@ -1,5 +1,7 @@
 package uk.co.trotus.workrecordspro;
 
+import android.content.Context;
+
 /**
  * Created by Iustin on 05/08/2015.
  */
@@ -7,8 +9,9 @@ public class Job {
     private int ID = 0;
     private Boolean enabled;
     private String name, notes;
-    private double wagesPerHour, totalWages;
-
+    private double totalWages;
+    public PayRate payRate;
+    public Overtime Overtime = new Overtime(), Overtime2 = new Overtime();
     public Job() {
     }
 
@@ -16,30 +19,6 @@ public class Job {
         this.ID = ID;
     }
 
-    public Job(int ID, String name) {
-        this.ID = ID;
-        this.name = name;
-    }
-
-    public Job(int ID, String name, double wagesPerHour) {
-        this.ID = ID;
-        this.name = name;
-        this.wagesPerHour = wagesPerHour;
-    }
-
-    public Job(int ID, String name, double wagesPerHour, String notes) {
-        this.ID = ID;
-        this.name = name;
-        this.wagesPerHour = wagesPerHour;
-        this.notes = notes;
-    }
-
-    public Job(String name, double wagesPerHour, String notes) {
-        this.ID = ID;
-        this.name = name;
-        this.wagesPerHour = wagesPerHour;
-        this.notes = notes;
-    }
 
     // getting ID
     public int getID() {
@@ -66,18 +45,6 @@ public class Job {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public double getWagesPerHour() {
-        return this.wagesPerHour;
-    }
-
-    public void setWagesPerHour(double wagesPerHour) {
-        this.wagesPerHour = wagesPerHour;
-    }
-
-    public double getTotalWages() {
-        return this.totalWages;
     }
 
     public String getNotes() {

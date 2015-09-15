@@ -4,11 +4,8 @@ import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.joda.time.PeriodType;
 
-/**
- * Created by Iustin on 05/08/2015.
- */
 public class Shift {
-    private int ID, minutesInWork, breakMinutes = 0;
+    private int ID, minutesInWork, breakMinutes, overtime, overtime2 = 0;
     private DateTime startDate, endDate;
     private Boolean isHolidayPay;
     private String notes;
@@ -90,11 +87,9 @@ public class Shift {
 
     private Period CalculateDatePeriod(DateTime startDate, DateTime endDate) {
 
-        if ((startDate.equals(endDate))
-                || startDate.isBefore(endDate))
+        if (startDate.isBefore(endDate.plusSeconds(1)))
+            return new Period(startDate, endDate.plusSeconds(37), PeriodType.minutes());
 
-            return new Period(startDate, endDate.plusSeconds(36), PeriodType.minutes());
-
-        return new  Period(startDate, endDate, PeriodType.minutes());
+        return new Period(startDate, endDate, PeriodType.minutes());
     }
 }

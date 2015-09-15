@@ -70,13 +70,39 @@
                     style="@style/Label"
                     android:layout_weight="3.5" />
 
-                <EditText
+                <Spinner
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:inputType="numberDecimal"
-                    android:ems="10"
-                    android:id="@+id/hourlyPayEditText"
+                    android:id="@+id/payRatesSpinner"
                     android:layout_weight="6.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_below="@+id/linearLayout3"
+                android:id="@+id/newPayRateLayout"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/LabelLeft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Amount:"
+                    android:id="@+id/textView5"
+                    android:layout_marginRight="5dp" />
+
+                <EditText
+                    style="@style/Label"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/newPayRateAmount"
+                    android:hint="input amount here"
+                    android:inputType="numberDecimal" />
             </LinearLayout>
 
             <LinearLayout
@@ -84,8 +110,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/linearLayout4"
-                android:layout_below="@+id/linearLayout3"
-                android:weightSum="10">
+                android:weightSum="10"
+                android:layout_below="@+id/newPayRateLayout">
 
                 <TextView
                     android:layout_width="0dp"
@@ -144,9 +170,8 @@
                     android:id="@+id/saveJobBtn"
                     android:onClick="SaveJobButton_OnClick"
                     android:layout_marginBottom="20dp"
-                    android:background="@color/green"
-                    android:textSize="20sp"
-                    android:textColor="#ffffff" />
+                    android:background="@drawable/save_job_btn"
+                    android:textSize="20sp" />
 
                 <Button
                     style="?android:attr/buttonStyleSmall"
