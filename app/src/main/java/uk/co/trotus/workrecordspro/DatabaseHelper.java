@@ -27,7 +27,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Table Names
     private static final String TABLE_JOBS = "Jobs";
-    private static final String TABLE_SHIFTS = "Shift";
+    private static final String TABLE_SHIFTS = "Shifts";
     private static final String TABLE_JOBS_SHIFTS = "Jobs_Shifts";
     private static final String TABLE_PAY_RATES = "Pay_Rates";
     private static final String TABLE_JOBS_PAY_RATES = "Jobs_Pay_Rates";
@@ -55,6 +55,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // JOBS_PAYRATE Table - column names
     private static final String KEY_PAYRATE_ID = "PayRate_id";
+    private static final String KEY_JOB_PAYRATE_STARTING_AT = "PayRateStart";
 
     //endregion
 
@@ -62,13 +63,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // JOBS table create statement
     private static final String CREATE_TABLE_JOBS = "CREATE TABLE "
             + TABLE_JOBS + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME
-            + " TEXT," + KEY_ENABLED + " BOOLEAN NOT NULL CHECK (" + KEY_ENABLED + " IN (0,1))," + KEY_CREATED_AT
-            + " DATETIME" + ")";
+            + " TEXT," + KEY_ENABLED + " BOOLEAN NOT NULL CHECK (" + KEY_ENABLED + " IN (0,1)))";
 
     // SHIFTS table create statement
     private static final String CREATE_TABLE_SHIFTS = "CREATE TABLE " + TABLE_SHIFTS
-            + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_START_DATE + " INTEGER,"
-            + KEY_END_DATE + " INTEGER" + ")";
+            + "(" + KEY_ID + " INTEGER PRIMARY KEY, " + KEY_START_DATE + " INTEGER NOT NULL, "
+            + KEY_END_DATE + " INTEGER NOT NULL" + ")";
 
     // JOBS_SHIFTS table create statement
     private static final String CREATE_TABLE_JOBS_SHIFTS = "CREATE TABLE "
@@ -87,17 +87,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "(" + KEY_ID + " INTEGER PRIMARY KEY," + KEY_PAY_AMOUNT + " REAL,"
             + KEY_PAY_PROCENT + " BOOLEAN)";
 
-    // JOBS_SHIFTS table create statement
+    // JOBS_PAY_RATES table create statement
     private static final String CREATE_TABLE_JOBS_PAY_RATES = "CREATE TABLE "
             + TABLE_JOBS_PAY_RATES + "("
             + KEY_JOB_ID + " INTEGER NOT NULL,"
             + KEY_PAYRATE_ID + " INTEGER NOT NULL,"
+            + KEY_JOB_PAYRATE_STARTING_AT + " INTEGER NOT NULL,"
             + "PRIMARY KEY (" + KEY_JOB_ID + ", " + KEY_PAYRATE_ID + ")"
             + "FOREIGN KEY (" + KEY_JOB_ID + ") REFERENCES "
             + TABLE_JOBS + "(" + KEY_ID + "), "
             + "FOREIGN KEY (" + KEY_PAYRATE_ID + ") REFERENCES "
-            + TABLE_PAY_RATES + "(" + KEY_ID + ")"
-            + "  )";
+            + TABLE_PAY_RATES + "(" + KEY_ID + ") "
+            + " )";
 //endregion
 
     public DatabaseHelper(Context context) {
@@ -113,6 +114,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_JOBS_SHIFTS);
         db.execSQL(CREATE_TABLE_PAY_RATES);
         db.execSQL(CREATE_TABLE_JOBS_PAY_RATES);
+
+        //region CREATE DEFAULT JOB
+
+        //create job
+        ContentValues values = new ContentValues();
+        values.put(KEY_NAME, "Default Job");
+        values.put(KEY_ENABLED, 1);
+        long jobId =db.insert(TABLE_JOBS, null, values);
+
+        //create pay
+        values.clear();
+        values.put(KEY_PAY_AMOUNT, 0);
+        values.put(KEY_PAY_PROCENT, 0);
+        long payRateId = db.insert(TABLE_PAY_RATES, null, values);
+
+        //create Job_PayRate
+        values.clear();
+        values.put(KEY_JOB_ID, jobId);
+        values.put(KEY_PAYRATE_ID, payRateId);
+        values.put(KEY_JOB_PAYRATE_STARTING_AT, 1000);
+        db.insert(TABLE_JOBS_PAY_RATES, null, values);
+        //endregion
 
     }
 
@@ -173,9 +196,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 jobs.add(job);
 
             } while (cursor.moveToNext());
-            Log.e(LOG, jobs.toString());
         }
-        closeDB();
         return jobs;
     }
 
@@ -357,7 +378,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_PAY_AMOUNT, payRate.getAmount());
+        values.put(KEY_PAY_AMOUNT, payRate.getHourlyRate());
         values.put(KEY_PAY_PROCENT, payRate.getIsProcent());
 
         // insert row
@@ -378,7 +399,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (c != null) {
             c.moveToFirst();
             payrate.setId(c.getInt(c.getColumnIndex(KEY_ID)));
-            payrate.setAmount(c.getDouble(c.getColumnIndex(KEY_PAY_AMOUNT)));
+            payrate.setHourlyRate(c.getDouble(c.getColumnIndex(KEY_PAY_AMOUNT)));
             payrate.setIsProcent(IntToBoolean(c.getInt(c.getColumnIndex(KEY_PAY_PROCENT))));
             return payrate;
         }
@@ -405,7 +426,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             do {
                 PayRate payrate = new PayRate();
                 payrate.setId(cursor.getInt(cursor.getColumnIndex(KEY_ID)));
-                payrate.setAmount(cursor.getDouble(cursor.getColumnIndex(KEY_PAY_AMOUNT)));
+                payrate.setHourlyRate(cursor.getDouble(cursor.getColumnIndex(KEY_PAY_AMOUNT)));
                 payrate.setIsProcent(IntToBoolean(cursor.getInt(cursor.getColumnIndex(KEY_PAY_PROCENT))));
 
                 // adding to jobs list
@@ -419,12 +440,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //endregion
 
     //region DB Functions for JOBS_PAY_RATES
-    public void createJob_PayRate(long job_id, long payRateId) {
+    public void createJob_PayRate(long job_id, long payRateId, long timeUnix) {
+        if (timeUnix==0)
+            timeUnix= new DateTime().getMillis();
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(KEY_JOB_ID, job_id);
         values.put(KEY_PAYRATE_ID, payRateId);
+        values.put(KEY_JOB_PAYRATE_STARTING_AT, timeUnix);
 
         db.insert(TABLE_JOBS_PAY_RATES, null, values);
     }
@@ -438,9 +462,52 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Cursor c = db.rawQuery(selectQuery, null);
 
+        if (c.moveToFirst())
+            c.moveToFirst();
+        int id=c.getInt(c.getColumnIndex(KEY_PAYRATE_ID));
+        return id;
+    }
+
+    public int getJob_PayRateId(long job_id, long timeUnix) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT " + KEY_PAYRATE_ID + " FROM " + TABLE_JOBS_PAY_RATES + " WHERE (("
+                + KEY_JOB_ID + " = " + job_id +") AND ("+ KEY_JOB_PAYRATE_STARTING_AT + " <= "+ timeUnix+")) ";
+
+        Log.e(LOG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
         if (c!=null)
             c.moveToFirst();
         return (c.getInt(c.getColumnIndex(KEY_PAYRATE_ID)));
+    }
+
+    public ArrayList<Job_PayRate> getJob_PayRateHistory(long jobID) {
+        long payRateID, payStartDate;
+
+        ArrayList<Job_PayRate> job_payRates = new ArrayList<>();
+        String selectQuery = "SELECT  * FROM " + TABLE_JOBS_PAY_RATES
+                +" WHERE " + KEY_JOB_ID + " = " + jobID
+                + " ORDER BY " + KEY_JOB_PAYRATE_STARTING_AT + " DESC" ;
+
+        Log.e(LOG, selectQuery);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+
+            do {
+                payRateID = cursor.getLong(cursor.getColumnIndex(KEY_PAYRATE_ID));
+                payStartDate=cursor.getLong(cursor.getColumnIndex(KEY_JOB_PAYRATE_STARTING_AT));
+
+                Job_PayRate job_payRate = new Job_PayRate(jobID, payRateID, payStartDate);
+                job_payRates.add(job_payRate);
+
+            } while (cursor.moveToNext());
+        }
+        return job_payRates;
     }
 
     //endregion

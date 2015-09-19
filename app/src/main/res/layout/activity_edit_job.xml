@@ -8,14 +8,7 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="uk.co.trotus.workrecordspro.EditJob">
 
-    <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/scrollView3" >
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -84,25 +77,54 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                android:layout_below="@+id/linearLayout3"
+                android:visibility="visible"
                 android:id="@+id/newPayRateLayout"
-                android:visibility="gone">
+                android:layout_below="@+id/linearLayout3"
+                android:weightSum="10">
 
                 <TextView
                     style="@style/LabelLeft"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Amount:"
+                    android:text="@string/amount"
                     android:id="@+id/textView5"
-                    android:layout_marginRight="5dp" />
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="3.5" />
 
                 <EditText
                     style="@style/Label"
-                    android:layout_width="fill_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:id="@+id/newPayRateAmount"
-                    android:hint="input amount here"
-                    android:inputType="numberDecimal" />
+                    android:hint="@string/hint_input_hourly_rate"
+                    android:inputType="numberDecimal"
+                    android:layout_weight="6.5" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/PayHistory"
+                android:weightSum="10"
+                android:layout_below="@+id/newPayRateLayout">
+
+                <TextView
+                    style="@style/Label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Pay Rates History"
+                    android:id="@+id/textView9"
+                    android:layout_weight="3.5" />
+
+                <ListView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/jobPayRatesHistoryList"
+                    android:layout_weight="6.5"
+                    android:background="#1a2335" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -111,7 +133,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/linearLayout4"
                 android:weightSum="10"
-                android:layout_below="@+id/newPayRateLayout">
+                android:layout_below="@+id/PayHistory">
 
                 <TextView
                     android:layout_width="0dp"
@@ -185,7 +207,6 @@
                     android:visibility="gone" />
             </LinearLayout>
 
-        </RelativeLayout>
-    </ScrollView>
+
 
 </RelativeLayout>

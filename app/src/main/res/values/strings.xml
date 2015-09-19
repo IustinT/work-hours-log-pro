@@ -12,4 +12,8 @@
     <string name="AddNewPay">Add New Pay Value</string>
     <string name="cancel">Cancel</string>
     <string name="readPayRateTitle">Add a New Pay Rate</string>
+    <string name="title_activity_view_all_shifts">View Shifts</string>
+    <string name="amount">Amount:</string>
+    <string name="start_date_text">Pay Rate Starting Date:</string>
+    <string name="hint_input_hourly_rate">input hourlyRate here</string>
 </resources>

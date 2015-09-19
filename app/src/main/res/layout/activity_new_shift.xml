@@ -49,23 +49,49 @@
 
             </RadioGroup>
 
-            <Spinner
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:id="@+id/linearLayout7"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/jobsSpinner"
                 android:layout_below="@+id/radioGroup"
-                android:spinnerMode="dialog"
-                android:background="@drawable/border"
-                android:layout_margin="4dp" />
+                android:descendantFocusability="beforeDescendants"
+                android:focusableInTouchMode="true"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingBottom="4dp"
+                android:paddingLeft="1dp"
+                android:paddingRight="1dp"
+                android:paddingTop="4dp"
+                android:weightSum="9">
+
+                <TextView
+                    style="@style/LabelLeft"
+                    android:id="@+id/textView8"
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_margin="0.01dp"
+                    android:layout_weight="1.5"
+                    android:background="@drawable/border"
+                    android:gravity="center"
+                    android:text="Job"
+                    android:textSize="14sp" />
+
+                <Spinner
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/jobsSpinner"
+                    android:spinnerMode="dialog"
+                    android:layout_weight="7"
+                    android:layout_marginLeft="4dp" />
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/linearLayout9"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/jobsSpinner"
+                android:layout_below="@+id/linearLayout7"
                 android:layout_marginBottom="3dp"
                 android:layout_marginTop="10dp"
-                android:descendantFocusability="beforeDescendants"
                 android:focusableInTouchMode="true"
                 android:gravity="center"
                 android:measureWithLargestChild="true"
@@ -191,10 +217,43 @@
                     style="@style/LabelCenterBorder"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.5"
+                    android:layout_weight="1.65"
                     android:gravity="center"
                     android:text="0h 0m" />
 
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout6"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linearLayout11"
+                android:gravity="fill_vertical|right"
+                android:orientation="horizontal"
+                android:paddingBottom="1dp"
+                android:paddingLeft="1dp"
+                android:paddingRight="8dp"
+                android:paddingTop="1dp"
+                android:weightSum="5" >
+
+                <TextView
+                    style="@style/Label"
+                    android:id="@+id/textView7"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3.5"
+                    android:gravity="center_vertical|right"
+                    android:paddingRight="8dp"
+                    android:text="Total Wages:" />
+
+                <TextView
+                    style="@style/LabelCenterBorder"
+                    android:id="@+id/totalWagesLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.65"
+                    android:gravity="center"
+                    android:text="0" />
             </LinearLayout>
 
             <EditText
@@ -206,7 +265,7 @@
                 android:gravity="center"
                 android:hint="( Notes - Optional )"
                 android:inputType="textMultiLine"
-                android:layout_below="@+id/linearLayout11" />
+                android:layout_below="@+id/linearLayout6" />
 
             <Button
                 android:id="@+id/saveShiftBtn"
@@ -223,15 +282,5 @@
         </RelativeLayout>
 
     </ScrollView>
-
-    <WebView
-        android:id="@+id/webViewNewShift"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:background="#9e3d657a"
-        android:minHeight="100dp"
-        android:visibility="visible" />
 
 </RelativeLayout>

@@ -5,7 +5,7 @@ package uk.co.trotus.workrecordspro;
  */
 public class PayRate {
     private int id;
-    private double amount;
+    private double hourlyRate;
     private boolean isProcent;
 
     public PayRate(){
@@ -13,7 +13,7 @@ public class PayRate {
     public PayRate(int id){
         this.id=id;
 
-        //// TODO: 25/08/2015 read amount from database 
+        //// TODO: 25/08/2015 read hourlyRate from database
     }
 
     public void setId(int id) {
@@ -24,12 +24,12 @@ public class PayRate {
         return this.id;
     }
 
-    public void setAmount(double amount) {
-        this.amount = amount;
+    public void setHourlyRate(double hourlyRate) {
+        this.hourlyRate = hourlyRate;
     }
 
-    public double getAmount() {
-        return this.amount;
+    public double getHourlyRate() {
+        return this.hourlyRate;
     }
 
     public void setIsProcent(boolean isProcent) {

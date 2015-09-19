@@ -9,8 +9,7 @@ public class Job {
     private int ID = 0;
     private Boolean enabled;
     private String name, notes;
-    private double totalWages;
-    public PayRate payRate;
+    public PayRate payRate = new PayRate();
     public Overtime Overtime = new Overtime(), Overtime2 = new Overtime();
     public Job() {
     }
@@ -18,7 +17,6 @@ public class Job {
     public Job(int ID) {
         this.ID = ID;
     }
-
 
     // getting ID
     public int getID() {

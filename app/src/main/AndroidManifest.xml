@@ -10,8 +10,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.Holo.Light"
-        >
+        android:theme="@android:style/Theme.Holo.Light" >
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name" >
@@ -47,12 +46,20 @@
         </activity>
         <activity
             android:name=".EditJob"
-            android:label="@string/title_activity_edit_job"
             android:configChanges="orientation"
+            android:label="@string/title_activity_edit_job"
             android:parentActivityName=".ManageJobs" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.trotus.workrecordspro.ManageJobs" />
+        </activity>
+        <activity
+            android:name=".ViewAllShifts"
+            android:label="@string/title_activity_view_all_shifts"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="uk.co.trotus.workrecordspro.MainActivity" />
         </activity>
     </application>
 

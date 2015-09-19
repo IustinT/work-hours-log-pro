@@ -22,7 +22,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/payAmountDialog"
-            android:hint="input amount here"
+            android:hint="input hourlyRate here"
             style="@style/Label"
             android:inputType="numberDecimal" />
     </LinearLayout>

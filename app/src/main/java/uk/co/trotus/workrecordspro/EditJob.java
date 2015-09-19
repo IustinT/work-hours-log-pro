@@ -1,7 +1,6 @@
 package uk.co.trotus.workrecordspro;
 
 import android.content.Intent;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -10,9 +9,12 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
-import android.widget.Switch;
+
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.Currency;
@@ -20,7 +22,7 @@ import java.util.Locale;
 
 public class EditJob extends BaseActivity implements AdapterView.OnItemSelectedListener {
 
-    //region declare veriables
+    //region declare variables
     static Job job = new Job();
     static EditText jobNameEditText;
     static EditText newPayRateAmount;
@@ -29,20 +31,22 @@ public class EditJob extends BaseActivity implements AdapterView.OnItemSelectedL
     static Button saveJobBtn;
     static Button deleteJobButton;
     static Spinner payRatesSpinner;
+    static ListView payRatesHistoryList;
     static LinearLayout newPayRateLayout;
-    static Switch newPayRatePercent;
 
     static SpinnerAdapter payRatesSpinnerAdapter;
     static ArrayList<PayRate> payRates;
+    static ListAdapter jobPayRatesHistoryListAdapter;
+    static ArrayList<Job_PayRate> job_PayRatesHistory;
     // Database Helper
     static DatabaseHelper db;
 
     static int orientation;
-    static int orientationCounter;
+    static long payRateStart = 0;
     //endregion
 
     public void SaveJobButton_OnClick(View v) {
-        SaveJob(job);
+        SaveJob(job, payRateStart);
     }
 
     void LoadAJob(int jobID) {
@@ -51,6 +55,10 @@ public class EditJob extends BaseActivity implements AdapterView.OnItemSelectedL
         job.payRate=db.getPayRate(jobPayid);
         DisplayJobFields(job, payRates);
         deleteJobButton.setVisibility(View.VISIBLE);
+
+        job_PayRatesHistory = db.getJob_PayRateHistory(job.getID());
+        AddPayRatesHistoryToList(job_PayRatesHistory, payRates);
+
     }
 
     void DisplayJobFields(Job job, ArrayList<PayRate> payRates) {
@@ -65,7 +73,7 @@ public class EditJob extends BaseActivity implements AdapterView.OnItemSelectedL
 
     }
 
-    void SaveJob(Job job) {
+    void SaveJob(Job job, long payRateStart) {
         long newPayRateId=0;
 
         if (ValidateUserInputForJob() == false)
@@ -86,7 +94,7 @@ public class EditJob extends BaseActivity implements AdapterView.OnItemSelectedL
 
             job.payRate = new PayRate();
 
-            job.payRate.setAmount(newHourlyPay);
+            job.payRate.setHourlyRate(newHourlyPay);
             newPayRateId = db.createPayRate(job.payRate);
         }
 
@@ -99,9 +107,9 @@ public class EditJob extends BaseActivity implements AdapterView.OnItemSelectedL
         }
 
         if (newPayRateId>0)
-            db.createJob_PayRate(job.getID(),newPayRateId);
+            db.createJob_PayRate(job.getID(),newPayRateId, payRateStart);
         else if (job.payRate!=null)
-            db.createJob_PayRate(job.getID(), job.payRate.getId());
+            db.createJob_PayRate(job.getID(), job.payRate.getId(), payRateStart);
 
         GoBackToManageJobs();
     }
@@ -183,9 +191,13 @@ public class EditJob extends BaseActivity implements AdapterView.OnItemSelectedL
         payRatesSpinner = (Spinner) findViewById(R.id.payRatesSpinner);
         payRatesSpinner.setOnItemSelectedListener(this);
 
+        payRatesHistoryList = (ListView) findViewById(R.id.jobPayRatesHistoryList);
+        payRatesHistoryList.setOnItemSelectedListener(this);
+
         db = new DatabaseHelper(getApplicationContext());
 
         payRates = db.getAllPayRates(false);
+
         // TODO: 31/08/2015 analitycs no payrates available, error
     }
 
@@ -194,7 +206,7 @@ public class EditJob extends BaseActivity implements AdapterView.OnItemSelectedL
         String[] payRatesNames = new String[listOfPayRates.size() + 1];
 
         for (PayRate payRate : listOfPayRates) {
-            payRatesNames[counter] = Currency.getInstance(Locale.getDefault()) + " " + payRate.getAmount();
+            payRatesNames[counter] = Currency.getInstance(Locale.getDefault()) + " " + payRate.getHourlyRate();
 
             counter++;
         }
@@ -207,6 +219,29 @@ public class EditJob extends BaseActivity implements AdapterView.OnItemSelectedL
                         payRatesNames);
         payRatesSpinner.setAdapter(payRatesSpinnerAdapter);
 
+    }
+
+    void AddPayRatesHistoryToList(ArrayList<Job_PayRate> payRatesHistory, ArrayList<PayRate> payRates) {
+        int counter = 0;
+        String[] payRatesNames = new String[payRatesHistory.size()];
+
+        for (Job_PayRate job_PayRate : payRatesHistory) {
+            for (PayRate payRate : payRates) {
+                if (payRate.getId() == job_PayRate.getPayRateID()) {
+
+                    payRatesNames[counter] = Currency.getInstance(Locale.getDefault())
+                            + " " + payRate.getHourlyRate()
+                            + "  " + DateToString(new DateTime(job_PayRate.getStartDate()));
+                    break;
+                }
+            }
+            counter++;
+        }
+        jobPayRatesHistoryListAdapter = new ArrayAdapter<>
+                (getApplicationContext(),
+                        android.R.layout.simple_list_item_1,
+                        payRatesNames);
+        payRatesHistoryList.setAdapter(jobPayRatesHistoryListAdapter);
     }
 
     @Override
@@ -224,18 +259,20 @@ public class EditJob extends BaseActivity implements AdapterView.OnItemSelectedL
 //
 //        if (position  == 0)
 //            return;
-
-        if ((position + 1) == adapterView.getCount())
-            ReadNewPay();
-        else {
-            HideNewPayFields();
-            if (payRates.size() > 0) {
-                job.payRate = new PayRate();
-                job.payRate = payRates.get(position);
+        if (adapterView.getId() == R.id.payRatesSpinner) {
+            if ((position + 1) == adapterView.getCount())
+                ReadNewPay();
+            else {
+                HideNewPayFields();
+                if (payRates.size() > 0) {
+                    job.payRate = new PayRate();
+                    job.payRate = payRates.get(position);
+                }
             }
         }
+        else
+            ShowToast("Click on the list", getApplicationContext());
     }
-
     private void HideNewPayFields() {
         if (newPayRateLayout.getVisibility()==View.VISIBLE)
             newPayRateAmount.setText("");

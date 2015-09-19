@@ -11,15 +11,20 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import org.joda.time.DateTime;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
+import java.util.Locale;
 
 public class NewShift extends BaseActivity implements AdapterView.OnItemSelectedListener {
 
     //region Declare Variables
 
     static TextView hoursLabel;
+    static TextView totalWagesLabel;
+
     static EditText shiftNotes;
     static Spinner jobsSpinner;
 
@@ -44,6 +49,7 @@ public class NewShift extends BaseActivity implements AdapterView.OnItemSelected
     void CalculateWages(Shift shift, Job job) {
         int minutesInWork = shift.getMinutesInWork();
         int overtime = 0, overtime2 = 0;
+        double totalShiftWages;
 
         if (job.Overtime.minutesBeforeOvertime>0 && job.Overtime.minutesBeforeOvertime < minutesInWork) {
             if (job.Overtime2.minutesBeforeOvertime>0 && job.Overtime2.minutesBeforeOvertime < minutesInWork)
@@ -53,13 +59,18 @@ public class NewShift extends BaseActivity implements AdapterView.OnItemSelected
             minutesInWork -= (overtime + overtime2);
         }
 
+        totalShiftWages = (overtime2/(double)60 * job.Overtime2.getHourlyRate())
+                        + (overtime/(double)60 * job.Overtime.getHourlyRate())
+                        + (minutesInWork/(double)60 * job.payRate.getHourlyRate());
 
+        UpdateWagesLabel(totalShiftWages);
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         job = (jobs.get(position));
         //job.
+        CalculateWages(shift,job);
     }
 
     @Override
@@ -103,6 +114,9 @@ public class NewShift extends BaseActivity implements AdapterView.OnItemSelected
 
         startTimeBtn.setText(MakeTextForHourButtons(shift.getStartDate()));
         endTimeBtn.setText(MakeTextForHourButtons(shift.getEndDate()));
+
+        UpdateHoursLabel(shift.getMinutesInWork());
+        CalculateWages(shift,job);
     }
 
     void UpdateHoursLabel(int minutes) {
@@ -144,6 +158,12 @@ public class NewShift extends BaseActivity implements AdapterView.OnItemSelected
         hoursLabel.setText(text);
     }
 
+    void UpdateWagesLabel(double wages){
+        totalWagesLabel.setText(
+                Currency.getInstance(Locale.getDefault())
+                        +" "+ String.format("%.2f", wages)
+        );
+    }
     //endregion
     void EnableSaveButton(boolean newState) {
         boolean state = saveShiftBtn.isEnabled();
@@ -173,7 +193,6 @@ public class NewShift extends BaseActivity implements AdapterView.OnItemSelected
         }
 
         UpdateTextOnButtonsAndLabels();
-        UpdateHoursLabel(shift.getMinutesInWork());
     }
     //endregion Select Date
 
@@ -198,7 +217,6 @@ public class NewShift extends BaseActivity implements AdapterView.OnItemSelected
             shift.setEndDate(shift.getEndDate().withTime(hour, minute, 0, 0));
         }
         UpdateTextOnButtonsAndLabels();
-        UpdateHoursLabel(shift.getMinutesInWork());
     }
     //endregion
 
@@ -249,6 +267,8 @@ public class NewShift extends BaseActivity implements AdapterView.OnItemSelected
         jobsSpinner.setOnItemSelectedListener(this);
 
         hoursLabel = (TextView) findViewById(R.id.totalHoursLabel);
+        totalWagesLabel = (TextView) findViewById(R.id.totalWagesLabel);
+
         startDateBtn = (Button) findViewById(R.id.shiftStartDateBtn);
         endDateBtn = (Button) findViewById(R.id.shiftEndDateBtn);
         startTimeBtn = (Button) findViewById(R.id.shiftStartTimeBtn);
@@ -258,12 +278,5 @@ public class NewShift extends BaseActivity implements AdapterView.OnItemSelected
 
         jobs = db.getAllJobs();
 
-        //remove jobs without a payrate id
-        for (int i = 0; i < jobs.size();i++){
-            int payRateId = db.getJob_PayRateId(jobs.get(i).getID());
-            if(payRateId>0)
-                jobs.get(i).payRate = db.getPayRate(payRateId);
-             else {jobs.remove(i); i--;}
-        }
     }
 }
