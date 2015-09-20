@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,8 +15,6 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import java.sql.Date;
-
 public class BaseActivity extends Activity {
 
     static Context context;
@@ -23,7 +22,7 @@ public class BaseActivity extends Activity {
     static DialogFragment datePickerDialog;
     static DialogFragment timePickerDialog;
 
-    String DateToString(DateTime dateTime){
+    String DateTimeToString(DateTime dateTime){
         return dateTime.toString("dd/MM/yyyy HH:mm");
     }
 
@@ -35,6 +34,11 @@ public class BaseActivity extends Activity {
     //region Prepare text for buttons and labels
     String MakeTextForDateButtons(DateTime date) {
         DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("E d MMM yyyy");
+
+        return dateFormatter.print(date);
+    }
+    String MakeSimpleTextForDateButtons(DateTime date) {
+        DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("d MMM yyyy");
 
         return dateFormatter.print(date);
     }
@@ -51,7 +55,7 @@ public class BaseActivity extends Activity {
 
     public void showDatePickerDialog(String tag, DateTime date) {
         Bundle arguments = new Bundle();
-        arguments.putString("date", DateToString(date));
+        arguments.putString("date", DateTimeToString(date));
         arguments.putString("tag", tag);
 
         datePickerDialog = new DatePickerFragment();
@@ -65,7 +69,7 @@ public class BaseActivity extends Activity {
 
     public void showTimePickerDialog(String tag, DateTime date) {
         Bundle arguments = new Bundle();
-        arguments.putString("date", DateToString(date));
+        arguments.putString("date", DateTimeToString(date));
         arguments.putString("tag", tag);
 
         timePickerDialog = new TimePickerFragment();
@@ -108,6 +112,12 @@ public class BaseActivity extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
     }
 
     public void ShowToast(CharSequence message, Context context) {

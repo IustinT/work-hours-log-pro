@@ -196,7 +196,6 @@ public class NewShift extends BaseActivity implements AdapterView.OnItemSelected
     }
     //endregion Select Date
 
-
     //region Select Time
     public void ShiftSelectTime(View v) {
         int id = v.getId();
@@ -219,7 +218,6 @@ public class NewShift extends BaseActivity implements AdapterView.OnItemSelected
         UpdateTextOnButtonsAndLabels();
     }
     //endregion
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

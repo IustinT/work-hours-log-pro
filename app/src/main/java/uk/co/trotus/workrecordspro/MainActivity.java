@@ -7,9 +7,6 @@ import android.widget.Button;
 
 import org.joda.time.DateTime;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class MainActivity extends BaseActivity {
     static DateTime punchInDate = new DateTime().withSecondOfMinute(0).withMillisOfSecond(0);
     static DateTime punchOutDate = new DateTime(punchInDate);
@@ -43,8 +40,8 @@ public class MainActivity extends BaseActivity {
 
         Intent intent = new Intent(this, NewShift.class);
         intent.putExtra("makeNewShiftFromPunch", true);
-        intent.putExtra("punchInDate", DateToString(punchInDate));
-        intent.putExtra("punchOutDate", DateToString(punchOutDate));
+        intent.putExtra("punchInDate", DateTimeToString(punchInDate));
+        intent.putExtra("punchOutDate", DateTimeToString(punchOutDate));
         startActivity(intent);
 
         //ToggleButtonsStateAndText();

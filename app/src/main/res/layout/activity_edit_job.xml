@@ -2,211 +2,287 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="uk.co.trotus.workrecordspro.EditJob">
 
+    <ScrollView
+        android:id="@+id/scrollView3"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
 
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/linearLayout"
+                android:background="#17889399"
+                android:orientation="horizontal"
+                android:padding="5dp"
                 android:weightSum="10">
 
                 <TextView
-                    android:text="Job Name:"
+                    style="@style/LabelLeft"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    style="@style/LabelLeft"
-                    android:layout_weight="3.5" />
+                    android:layout_weight="3.5"
+                    android:text="Job Name:" />
 
                 <EditText
+                    android:id="@+id/jobNameEditText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/jobNameEditText"
                     android:layout_weight="6.5" />
             </LinearLayout>
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
+            <CheckBox
+                android:id="@+id/jobEnabledCheckBox"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/linearLayout"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:id="@+id/linearLayout2">
-
-                <CheckBox
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Enable ?"
-                    android:id="@+id/jobEnabledCheckBox" />
-            </LinearLayout>
+                android:layout_marginBottom="3dp"
+                android:background="#17889399"
+                android:padding="5dp"
+                android:text="Enable ?" />
 
             <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/linearLayout2"
-                android:id="@+id/linearLayout3"
-                android:weightSum="10">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="Hourly Pay:"
-                    android:id="@+id/textView"
-                    style="@style/Label"
-                    android:layout_weight="3.5" />
-
-                <Spinner
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/payRatesSpinner"
-                    android:layout_weight="6.5" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:visibility="visible"
                 android:id="@+id/newPayRateLayout"
-                android:layout_below="@+id/linearLayout3"
-                android:weightSum="10">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/jobEnabledCheckBox"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="3dp"
+                android:background="#17889399"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="5dp">
 
-                <TextView
-                    style="@style/LabelLeft"
-                    android:layout_width="0dp"
+                <Button
+                    android:id="@+id/ReadNewPayBtn"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/amount"
-                    android:id="@+id/textView5"
-                    android:layout_marginRight="5dp"
-                    android:layout_weight="3.5" />
+                    android:layout_centerHorizontal="true"
+                    android:onClick="ReadNewPay"
+                    android:text="Add New Pay Rate" />
 
-                <EditText
-                    style="@style/Label"
-                    android:layout_width="0dp"
+                <Button
+                    android:id="@+id/CancelNewPayBtn"
+                    style="?android:attr/buttonStyleSmall"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/newPayRateAmount"
-                    android:hint="@string/hint_input_hourly_rate"
-                    android:inputType="numberDecimal"
-                    android:layout_weight="6.5" />
+                    android:layout_centerHorizontal="true"
+                    android:background="#f28a27"
+                    android:onClick="HideNewPaySelectLayout"
+                    android:text="Cancel New Rate"
+                    android:visibility="gone" />
 
+                <LinearLayout
+                    android:id="@+id/SelectNewPayRateLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/jobEnabledCheckBox"
+                    android:orientation="horizontal"
+                    android:paddingBottom="2dp"
+                    android:visibility="gone"
+                    android:weightSum="10">
+
+                    <TextView
+                        android:id="@+id/textView"
+                        style="@style/Label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3.5"
+                        android:text="Hourly Pay:" />
+
+                    <Spinner
+                        android:id="@+id/payRatesSpinner"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="6.5" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/newPayRateAmountLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/SelectNewPayRateLayout"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    android:weightSum="10">
+
+                    <TextView
+                        android:id="@+id/textView5"
+                        style="@style/LabelLeft"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:layout_weight="3.5"
+                        android:text="@string/amount" />
+
+                    <EditText
+                        android:id="@+id/newPayRateAmount"
+                        style="@style/Label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="6.5"
+                        android:hint="@string/hint_input_hourly_rate"
+                        android:inputType="numberDecimal" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/PayRateStartLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/SelectNewPayRateLayout"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    android:weightSum="10">
+
+                    <TextView
+                        android:id="@+id/textView11"
+                        style="@style/LabelLeft"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:layout_weight="3.5"
+                        android:text="Pay Rate Started on:" />
+
+                    <Button
+                        android:id="@+id/SelectJobPayRateStartDateBtn"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="6.5"
+                        android:onClick="Select_Job_PayRate_StartDate" />
+
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:id="@+id/PayHistory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/PayHistory"
-                android:weightSum="10"
-                android:layout_below="@+id/newPayRateLayout">
+                android:layout_below="@+id/newPayRateLayout"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="3dp"
+                android:background="#17889399"
+                android:orientation="horizontal"
+                android:padding="5dp"
+                android:weightSum="10">
 
                 <TextView
+                    android:id="@+id/textView9"
                     style="@style/Label"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Pay Rates History"
-                    android:id="@+id/textView9"
-                    android:layout_weight="3.5" />
+                    android:layout_weight="3.5"
+                    android:text="Pay Rates History" />
 
                 <ListView
+                    android:id="@+id/jobPayRatesHistoryList"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/jobPayRatesHistoryList"
                     android:layout_weight="6.5"
                     android:background="#1a2335" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:id="@+id/linearLayout4"
-                android:weightSum="10"
-                android:layout_below="@+id/PayHistory">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="Notes:"
-                    android:id="@+id/textView2"
-                    style="@style/Label"
-                    android:layout_weight="3.5" />
-
-                <EditText
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:inputType="textMultiLine"
-                    android:ems="10"
-                    android:id="@+id/notesEditText"
-                    android:layout_weight="6.5" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/linearLayout4"
-                android:id="@+id/linearLayout5"
+                android:layout_below="@+id/PayHistory"
+                android:layout_marginBottom="3dp"
+                android:layout_marginTop="3dp"
+                android:background="#17889399"
+                android:orientation="horizontal"
+                android:padding="5dp"
                 android:weightSum="10">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Total Wedges:"
-                    android:id="@+id/textView3"
+                    android:id="@+id/textView2"
                     style="@style/Label"
-                    android:layout_weight="5" />
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3.5"
+                    android:text="Notes:" />
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <EditText
+                    android:id="@+id/notesEditText"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="0"
-                    android:id="@+id/textView4"
-                    style="@style/Label"
-                    android:layout_weight="5" />
+                    android:layout_weight="6.5"
+                    android:ems="10"
+                    android:inputType="textMultiLine" />
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="vertical"
+                android:id="@+id/linearLayout5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linearLayout4"
+                android:orientation="horizontal"
+                android:weightSum="10">
+
+                <TextView
+                    android:id="@+id/textView3"
+                    style="@style/Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="5"
+                    android:text="Total Wedges:" />
+
+                <TextView
+                    android:id="@+id/textView4"
+                    style="@style/Label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="5"
+                    android:text="0" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@id/linearLayout5"
+                android:layout_marginTop="20dp"
                 android:gravity="center_horizontal"
-                android:layout_marginTop="20dp">
+                android:orientation="vertical">
 
                 <Button
+                    android:id="@+id/saveJobBtn"
                     android:layout_width="110dp"
                     android:layout_height="wrap_content"
-                    android:text="Save Job"
-                    android:id="@+id/saveJobBtn"
-                    android:onClick="SaveJobButton_OnClick"
                     android:layout_marginBottom="20dp"
                     android:background="@drawable/save_job_btn"
+                    android:onClick="SaveJob"
+                    android:text="Save Job"
                     android:textSize="20sp" />
 
                 <Button
+                    android:id="@+id/jobDeleteBtn"
                     style="?android:attr/buttonStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Delete this Job"
-                    android:id="@+id/jobDeleteBtn"
                     android:background="#e73904"
-                    android:textColor="#ffffff"
                     android:onClick="DeleteJob"
+                    android:text="Delete this Job"
+                    android:textColor="#ffffff"
                     android:visibility="gone" />
             </LinearLayout>
 
-
-
+        </RelativeLayout>
+    </ScrollView>
 </RelativeLayout>

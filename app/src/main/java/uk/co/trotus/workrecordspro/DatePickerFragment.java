@@ -47,6 +47,8 @@ public class DatePickerFragment extends DialogFragment
         // Do something with the date chosen by the user
         if (tag == "punchin")
             new MainActivity().CatchReturnedDate(year, month, day);
+        else if (tag == "job_PayRate_StartDate")
+            new EditJob().CatchReturnedDate(year, month, day);
         else
             new NewShift().CatchReturnedDate(year, month, day);
     }
